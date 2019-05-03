@@ -34,17 +34,11 @@ func Wrap(wrapped net.Conn) Conn {
 
 func (c *conn) Read(b []byte) (n int, err error) {
 	if c.br != nil {
-		br := c.br
-		n = c.br.Buffered()
-		if n > len(b) {
-			n = len(b)
-			b = b[:n]
-		} else {
+		n, err = c.br.Read(b)
+		if c.br.Buffered() == 0 {
 			c.br = nil
 		}
-		if n > 0 {
-			return br.Read(b)
-		}
+		return n, err
 	}
 	return c.Conn.Read(b)
 }

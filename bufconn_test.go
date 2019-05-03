@@ -16,7 +16,8 @@ var (
 )
 
 func TestRead(t *testing.T) {
-	wrapped := mockconn.New(&bytes.Buffer{}, bytes.NewReader(data))
+	response := bytes.NewBuffer(data)
+	wrapped := mockconn.New(&bytes.Buffer{}, response)
 	conn := Wrap(wrapped)
 	head := conn.Head()
 	line1, err := head.ReadString('\n')
@@ -26,12 +27,13 @@ func TestRead(t *testing.T) {
 	if !assert.Equal(t, alphabet+"\n", line1) {
 		return
 	}
+	response.WriteString(alphabet)
 	_line2, err := readAll(conn)
 	if !assert.NoError(t, err) {
 		return
 	}
 	line2 := string(_line2)
-	assert.Equal(t, alphabet, line2)
+	assert.Equal(t, alphabet+alphabet, line2)
 }
 
 func readAll(r io.Reader) ([]byte, error) {
