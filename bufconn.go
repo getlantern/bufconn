@@ -46,3 +46,7 @@ func (c *conn) Read(b []byte) (n int, err error) {
 func (c *conn) Head() *bufio.Reader {
 	return c.br
 }
+
+func (c *conn) Wrapped() net.Conn {
+	return c.Conn
+}
